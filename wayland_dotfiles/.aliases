@@ -57,8 +57,9 @@ alias ax6s="ssh_add_check; ssh root@192.168.31.2"
 # Git相关
 alias gaa='git add -A'
 alias gc='git commit -v'
-alias codeberg='git push codeberg'
-alias github='git push github'
+alias codeberg='ssh_add_check; git push codeberg'
+alias github='ssh_add_check; git push github'
+alias gpl='ssh_add_check; git pull'
 
 # 检查 SSH 代理并自动添加密钥
 ssh_add_check() {
