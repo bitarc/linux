@@ -255,7 +255,7 @@ else
     echo -e "${GREEN}File synchronization completed.${NC}"
     sleep 1  # 成功消息后等待1秒
 fi
-
+sudo systemctl daemon-reload && sudo systemctl enable numlock --now
 echo -e "${GREEN}All configurations completed successfully!${NC}"
 sleep 1  # 成功消息后等待1秒
 echo -e "${BLUE}===== Arch Linux initial configuration completed =====${NC}"
