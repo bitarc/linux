@@ -21,12 +21,12 @@ alias bashconfig="vim ~/.bashrc"
 
 # 目录导航
 alias cdconfig="cd /home/huai/.config"
-alias cdfree="cd /home/huai/free"
-alias cdlinux="cd /home/huai/linux"
-alias cddata="cd /home/huai/data"
-alias cdappdata="cd /home/huai/data/appdata"
+alias cdfree="cd /workspacefree"
+alias cdlinux="cd /workspace/linux"
+alias cddata="cd /data"
+alias cdappdata="cd /data/appdata"
 alias cdusb="cd /home/huai/usb"
-alias cdwww="cd /home/huai/data/www"
+alias cdwww="cd /data/www"
 
 
 # 音频控制
@@ -49,8 +49,8 @@ alias pl="vim /home/huai/.config/mpd/playlists/all.m3u"
 # 远程连接
 alias nas="ssh_add_check; ssh huai@192.168.31.21"
 alias cloud="ssh_add_check; ssh root@ssh.202309.xyz"
-alias sing-boxupload="ssh_add_check; rsync -avzh --delete /home/huai/free/sing-box/ root@ssh.202309.xyz:/root/sing-box/"
-alias clashupload="ssh_add_check; rsync -avzh --delete /home/huai/free/clash/ root@ssh.202309.xyz:/root/clash/"
+alias sing-boxupload="ssh_add_check; rsync -avzh --delete /workspace/free/sing-box/ root@ssh.202309.xyz:/root/sing-box/"
+alias clashupload="ssh_add_check; rsync -avzh --delete /workspace/free/clash/ root@ssh.202309.xyz:/root/clash/"
 alias openwrt="ssh_add_check; ssh root@192.168.31.1"
 alias ax6s="ssh_add_check; ssh root@192.168.31.2"
 
