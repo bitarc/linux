@@ -146,7 +146,7 @@ install_packages() {
         nfs-utils fastfetch btop pipewire pipewire-jack pipewire-alsa pipewire-pulse pavucontrol \
         fcitx5 fcitx5-rime fcitx5-configtool rsync ntfs-3g curl p7zip ranger reflector libnotify openssh \
         mpd mpc freerdp xf86-video-intel libva libva-intel-driver intel-media-driver vlc arp-scan unzip \
-        ttf-liberation wakeonlan noto-fonts noto-fonts-cjk noto-fonts-extra noto-fonts-emoji \
+        ttf-liberation terminus-font fontconfig wakeonlan noto-fonts noto-fonts-cjk noto-fonts-extra noto-fonts-emoji \
         sox libva-utils telegram-desktop ufw bc firejail nodejs stow firefox
 
     echo ">> Generating fstab"
