@@ -200,14 +200,12 @@ configure_system() {
     echo "initrd  /${UCODE}.img" >> /boot/loader/entries/arch.conf
     echo "initrd  /initramfs-linux-lts.img" >> /boot/loader/entries/arch.conf
     echo "options root=UUID=$ROOT_UUID rw quiet" >> /boot/loader/entries/arch.conf
-
-    useradd -m -G wheel $USERNAME
+   
     echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     echo "$USERNAME:1" | chpasswd
-
+    systemctl enable systemd-homed --now
+    homectl create $USERNAME --storage=luks --disk-size=60G --member-of=wheel --shell=/usr/bin/bash --password "1"
     echo -e "#GTK_IM_MODULE=fcitx\nQT_IM_MODULE=fcitx\nXMODIFIERS=@im=fcitx\nSDL_IM_MODULE=fcitx\nGLFW_IM_MODULE=fcitx" >> /etc/environment
-
-    su - $USERNAME -c "cd ~ && git clone https://github.com/huai12138/linux.git && mkdir data && mkdir Pictures && mkdir Music && mkdir Downloads"
 
     echo ">> Enabling system services"
     systemctl enable dhcpcd
