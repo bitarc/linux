@@ -204,7 +204,7 @@ configure_system() {
     echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     echo "$USERNAME:1" | chpasswd
     systemctl enable systemd-homed --now
-    homectl create $USERNAME --storage=luks --disk-size=60G --member-of=wheel --shell=/usr/bin/bash --password "1"
+    homectl create $USERNAME --storage=luks --disk-size=60G --uid=1000 --member-of=wheel --shell=/usr/bin/bash --password "1"
     echo -e "#GTK_IM_MODULE=fcitx\nQT_IM_MODULE=fcitx\nXMODIFIERS=@im=fcitx\nSDL_IM_MODULE=fcitx\nGLFW_IM_MODULE=fcitx" >> /etc/environment
 
     echo ">> Enabling system services"
