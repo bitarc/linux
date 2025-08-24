@@ -21,7 +21,7 @@ alias bashconfig="vim ~/.bashrc"
 
 # 目录导航
 alias cdconfig="cd /home/huai/.config"
-alias cdfree="cd /workspacefree"
+alias cdfree="cd /workspace/free"
 alias cdlinux="cd /workspace/linux"
 alias cddata="cd /data"
 alias cdappdata="cd /data/appdata"
