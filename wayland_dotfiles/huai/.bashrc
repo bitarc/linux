@@ -18,3 +18,4 @@ export TERM=xterm-256color
 if [ -f ~/.aliases ]; then
     source ~/.aliases
 fi
+umask 027
