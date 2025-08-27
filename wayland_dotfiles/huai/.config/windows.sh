@@ -9,7 +9,7 @@ INTERFACE="enp0s31f6"
 MAX_TRIES=30
 
 # 检查必要命令是否安装
-for cmd in arping wakeonlan xfreerdp3 notify-send; do
+for cmd in arping wakeonlan wlfreerdp3 notify-send; do
     if ! command -v "$cmd" >/dev/null 2>&1; then
         notify-send "错误" "$cmd 未安装"
         exit 1
@@ -21,7 +21,7 @@ connect_to_host() {
     notify-send "连接中" "启动 RDP..." && play ~/.config/dunst/connecting.mp3 >/dev/null 2>&1
     
     # 启动 RDP 连接并获取进程 ID
-    xfreerdp3 /v:"$TARGET_IP" /u:huai /p:110 /sound /dynamic-resolution /cert:ignore >/dev/null 2>&1 &
+    wlfreerdp3 /v:"$TARGET_IP" /u:huai /p:110 /sound /dynamic-resolution /cert:ignore >/dev/null 2>&1 &
     RDP_PID=$!
     
     # 等待几秒钟检查连接状态
