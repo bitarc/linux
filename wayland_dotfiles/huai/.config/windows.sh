@@ -46,7 +46,7 @@ if sudo arping -c 1 -w 1 -q -I "$INTERFACE" "$TARGET_IP" >/dev/null 2>&1; then
 else
     # 主机离线，尝试唤醒
     notify-send "唤醒中" "发送 WOL 包..." && play ~/.config/dunst/wol.mp3 >/dev/null 2>&1
-    if ! wakeonlan "$MAC_ADDRESS" >/dev/null 2>&1; then
+    if ! wakeonlan -i 192.168.31.255 "$MAC_ADDRESS" >/dev/null 2>&1; then
         notify-send "唤醒失败" "检查网络连接" && play ~/.config/dunst/error.mp3 >/dev/null 2>&1
         exit 1
     fi
