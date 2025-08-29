@@ -6,7 +6,7 @@
 TARGET_IP="192.168.31.15"
 MAC_ADDRESS="00:23:24:67:DF:14"
 INTERFACE="enp0s31f6"
-MAX_TRIES=30
+MAX_TRIES=15
 
 # 检查必要命令是否安装
 for cmd in arping wakeonlan wlfreerdp3 notify-send; do
@@ -25,7 +25,7 @@ connect_to_host() {
     RDP_PID=$!
     
     # 等待几秒钟检查连接状态
-    sleep 5
+    sleep 10
     
     # 检查 RDP 进程是否仍在运行
     if kill -0 "$RDP_PID" 2>/dev/null; then
@@ -62,8 +62,8 @@ else
             exit 0
         fi
 
-        # 每5秒显示一次进度通知
-        if [ $((i % 5)) -eq 0 ]; then
+        # 每1秒显示一次进度通知
+        if [ $((i % 1)) -eq 0 ]; then
             notify-send "等待中" "$i/$MAX_TRIES 秒"
         fi
         sleep 1
