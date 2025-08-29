@@ -1,0 +1,37 @@
+! B站弹幕相关元素屏蔽规则 - 精简优化版
+! 更新时间：2025-06-22
+
+! === 通用交互弹幕 ===
+bilibili.com##[class^="bili-danmaku-x-"]:not(.bili-danmaku-x-normal)
+bilibili.com##[data-type="vote"],
+bilibili.com##[data-type="up"],
+bilibili.com##[data-type="link"],
+bilibili.com##[data-type="guide"],
+bilibili.com##[data-type="score"],
+bilibili.com##[data-type="reserve"],
+bilibili.com##[data-type="goods"],
+bilibili.com##[data-type="activity"]
+
+! 容器级别拦截
+bilibili.com##.bpx-player-cmd-dm-wrap [class^="bili-danmaku-x-"]:not(.bili-danmaku-x-normal)
+bilibili.com##.bpx-player-cmd-dm-inside [class^="bili-danmaku-x-"]:not(.bili-danmaku-x-normal)
+
+! === 广告和提示拦截 ===
+bilibili.com##.adblock-tips
+bilibili.com##.adblock-tip
+bilibili.com##[class*="adblock"]
+bilibili.com##.anti-adblock
+bilibili.com##.ad-report
+bilibili.com##.ad-floor-exp
+bilibili.com##.sponsor-block
+
+! === 高性能选择器 ===
+bilibili.com###bili-danmaku-interactive
+bilibili.com###danmaku-interactive-container
+
+! === 阻止 JS 脚本注入 ===
+bilibili.com#%#//scriptlet('abort-on-property-read', 'danmakuInteractive')
+bilibili.com#%#//scriptlet('abort-on-property-read', 'interactiveDanmaku')
+
+! === Outlook 屏蔽规则 ===
+outlook.live.com##div[id^="MainModule"] div:last-child.GssDD
