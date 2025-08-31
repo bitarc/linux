@@ -69,21 +69,13 @@ ssh_add_check() {
         ssh-add /home/huai/.ssh/id_ed25519
     fi
 }
-
-# 为 /data 目录创建的 NFS 挂载函数 (简化版)
+# 为 /data 目录创建的 NFS 挂载函数 (静默版)
 mount-data() {
-    if mountpoint -q /data; then
-        echo "/data 已经挂载。"
-    else
-        echo "正在挂载 /data ..."
-        sudo mount -v -t nfs4 -o sec=sys 192.168.31.21:/ /data
-        if mountpoint -q /data; then
-            echo "挂载成功！"
-        else
-            echo "挂载失败，请检查输出信息。" >&2
-        fi
+    if ! mountpoint -q /data; then
+        sudo mount -t nfs4 -o sec=sys 192.168.31.21:/ /data
     fi
 }
+
 # 脚本和程序
 alias x="sh /home/huai/.config/dwl/dwl_status.sh | dwl"
 alias win="sh /home/huai/.config/windows.sh"
