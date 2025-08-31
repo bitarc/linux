@@ -25,10 +25,10 @@ alias bashconfig="vim ~/.bashrc"
 alias cdconfig="cd /home/huai/.config"
 alias cdfree="cd /workspace/free"
 alias cdlinux="cd /workspace/linux"
-alias cddata="cd /data"
-alias cdappdata="cd /data/appdata"
+alias cddata="mount-data; cd /data"
+alias cdappdata="mount-data; cd /data/appdata"
 alias cdusb="cd /home/huai/usb"
-alias cdwww="cd /data/www"
+alias cdwww="mount-data; cd /data/www"
 
 
 # 音频控制
