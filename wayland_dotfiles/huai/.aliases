@@ -62,6 +62,7 @@ alias gc='git commit -v'
 alias codeberg='ssh_add_check; git push codeberg'
 alias github='ssh_add_check; git push github'
 alias gpl='ssh_add_check; git pull'
+alias gcl='ssh_add_check; git clone'
 
 # 检查 SSH 代理并自动添加密钥
 ssh_add_check() {
