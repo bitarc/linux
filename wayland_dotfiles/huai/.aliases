@@ -1,6 +1,6 @@
 #!/usr/bin/sh
 export GPG_TTY=$(tty)
-
+umask 022
 # 通用别名配置文件
 # 可以被 .bashrc 和 .zshrc 同时引用
 
