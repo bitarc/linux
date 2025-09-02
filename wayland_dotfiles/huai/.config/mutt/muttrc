@@ -6,14 +6,13 @@
 set realname = "huai"  # 一个默认的名字
 set editor = "vim"       # 或者 "vim", 你喜欢的编辑器
 set sort = 'threads'      # 按主题线索排序
-set sort_aux = 'date'     # 辅以日期排序
+set sort=reverse-date  # 最新邮件在前面
+set sort_aux = 'last-date-received'  # 辅助排序
 set postponed = "+Drafts" # 默认草稿文件夹
 set trash = "+Deleted"  # 默认垃圾箱
-
 # --- 缓存设置 ---
 set header_cache = "~/.cache/mutt"
 set message_cachedir = "~/.cache/mutt"
-
 # --- 账户切换逻辑 ---
 # 默认加载第一个账户
 source "~/.config/mutt/hotmail"
