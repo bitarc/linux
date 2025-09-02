@@ -67,7 +67,7 @@ alias gcl='ssh_add_check; git clone'
 # 检查 SSH 代理并自动添加密钥
 ssh_add_check() {
     if [ -z "$(ssh-add -l 2>/dev/null | grep -v 'The agent has no identities.')" ]; then
-        ssh-add /home/huai/.ssh/id_ed25519
+        gpg -d /home/huai/.ssh/id_ed25519.gpg | ssh-add -
     fi
 }
 # 为 /data 目录创建的 NFS 挂载函数 (静默版)
