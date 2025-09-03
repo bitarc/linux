@@ -97,23 +97,32 @@ update_net() {
         return
     fi
 
-    local RX2 TX2 RX_DIFF TX_DIFF RX_SPEED TX_SPEED
+    # 定义局部变量
+    local RX2 TX2 RX_DIFF TX_SPEED RX_SPEED
+    
+    # 读取当前的网络字节数
     RX2=$(<"$NET_RX_FILE")
     TX2=$(<"$NET_TX_FILE")
 
+    # 计算自上次检查以来的字节差值 (Bytes/Second)
     RX_DIFF=$((RX2 - RX1))
     TX_DIFF=$((TX2 - TX1))
 
-    # 将单位转换逻辑放在这里
-    RX_SPEED=$(awk -v bytes="$RX_DIFF" 'BEGIN{printf "%.2fMB/s", bytes/1048576}')
-    TX_SPEED=$(awk -v bytes="$TX_DIFF" 'BEGIN{printf "%.2fMB/s", bytes/1048576}')
+    # --- 核心修改在这里 ---
+    # 将 Bytes/sec 转换为整数 Mbps
+    # 公式: (Bytes * 8 bits/Byte) / 1,000,000 bits/Megabit
+    # Shell 的整数除法会自动去掉浮点数部分
+    RX_SPEED=$(( (RX_DIFF * 8) / 1000000 ))
+    TX_SPEED=$(( (TX_DIFF * 8) / 1000000 ))
 
+    # 更新旧值，为下一次计算做准备
     RX1=$RX2
     TX1=$TX2
 
-    printf "%s %s %s %s" "$ICON_NET_DOWN" "$RX_SPEED" "$ICON_NET_UP" "$TX_SPEED"
+    # 输出最终格式化的字符串，单位为 Mbps
+    # 使用 %d 来格式化整数
+    printf "%s %dMbps %s %dMbps" "$ICON_NET_DOWN" "$RX_SPEED" "$ICON_NET_UP" "$TX_SPEED"
 }
-
 
 # --- 主循环 (Main Loop) ---
 # 移除了 exec 1> >(stdbuf -oL cat)，它通常不是必需的
