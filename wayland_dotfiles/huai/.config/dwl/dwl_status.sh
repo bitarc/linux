@@ -130,7 +130,7 @@ while true; do
 
     # 组合最终的输出字符串
     # 使用 printf 格式化字符串，比一长串变量拼接更清晰
-    printf "%s %s | %s %s | %s %s | %s %s | %s %s | %s %s | %s | %s %s | %s\n" \
+    printf "%s %s|%s %s|%s %s|%s %s|%s %s|%s %s|%s|%s %s|%s\n" \
         "$ICON_ARCH" "$ARCH" \
         "$ICON_MUSIC" "$music_status" \
         "$ICON_TEMP" "$temp_status" \
