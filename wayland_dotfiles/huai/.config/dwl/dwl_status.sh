@@ -21,13 +21,14 @@ INTERFACE=$(ip route | awk '/default/ {print $5; exit}')
 NET_RX_FILE="/sys/class/net/$INTERFACE/statistics/rx_bytes"
 NET_TX_FILE="/sys/class/net/$INTERFACE/statistics/tx_bytes"
 
-# 初始化网络速度计算变量 (如果接口存在且文件可读)
+# 初始化网络速度计算的全局变量
+# 这些变量将在 update_net 函数内部被修改
 if [[ -n "$INTERFACE" && -r "$NET_RX_FILE" && -r "$NET_TX_FILE" ]]; then
     RX1=$(<"$NET_RX_FILE")
     TX1=$(<"$NET_TX_FILE")
 fi
 
-# 初始化CPU使用率计算变量
+# 初始化CPU使用率计算的全局变量
 read -r CPU_PREV_TOTAL CPU_PREV_IDLE < <(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5}' /proc/stat)
 
 
@@ -50,7 +51,7 @@ update_cpu() {
         usage=0
     fi
     
-    # 更新上一次的值
+    # 更新上一次的值 (修改全局变量)
     CPU_PREV_TOTAL=$cpu_total
     CPU_PREV_IDLE=$cpu_idle
 
@@ -90,10 +91,13 @@ update_ime() {
     esac
 }
 
+# 全局变量，用于存储网络状态的最终字符串
+NET_STATUS_STR=""
+
 update_net() {
     # 检查网络是否初始化成功
     if [[ -z "$RX1" ]]; then
-        echo "N/A"
+        NET_STATUS_STR="N/A" # 直接设置全局变量
         return
     fi
 
@@ -108,24 +112,21 @@ update_net() {
     RX_DIFF=$((RX2 - RX1))
     TX_DIFF=$((TX2 - TX1))
 
-    # --- 核心修改在这里 ---
     # 将 Bytes/sec 转换为整数 Mbps
     # 公式: (Bytes * 8 bits/Byte) / 1,000,000 bits/Megabit
-    # Shell 的整数除法会自动去掉浮点数部分
     RX_SPEED=$(( (RX_DIFF * 8) / 1000000 ))
     TX_SPEED=$(( (TX_DIFF * 8) / 1000000 ))
 
-    # 更新旧值，为下一次计算做准备
+    # 直接更新全局变量 RX1 和 TX1，为下一次计算做准备
     RX1=$RX2
     TX1=$TX2
 
-    # 输出最终格式化的字符串，单位为 Mbps
-    # 使用 %d 来格式化整数
-    printf "%s %dMbps %s %dMbps" "$ICON_NET_DOWN" "$RX_SPEED" "$ICON_NET_UP" "$TX_SPEED"
+    # 不再 printf 到标准输出，而是直接设置全局变量 NET_STATUS_STR
+    NET_STATUS_STR=$(printf "%s %dMbps %s %dMbps" "$ICON_NET_DOWN" "$RX_SPEED" "$ICON_NET_UP" "$TX_SPEED")
 }
 
+
 # --- 主循环 (Main Loop) ---
-# 移除了 exec 1> >(stdbuf -oL cat)，它通常不是必需的
 while true; do
     # 调用函数获取所有状态
     cpu_status=$(update_cpu)
@@ -134,11 +135,13 @@ while true; do
     vol_status=$(update_volume)
     music_status=$(update_music)
     ime_status=$(update_ime)
-    net_status=$(update_net)
     time_status=$(date "+%a %b %d %H:%M")
+    
+    # 直接调用 update_net 函数。它会更新全局的 RX1, TX1 和 NET_STATUS_STR
+    update_net
 
-    # 组合最终的输出字符串
-    # 使用 printf 格式化字符串，比一长串变量拼接更清晰
+    # 组合最终的输出字符串，并打印到标准输出
+    # dwl 会从这里读取状态信息
     printf "%s %s|%s %s|%s %s|%s %s|%s %s|%s %s|%s|%s %s|%s\n" \
         "$ICON_ARCH" "$ARCH" \
         "$ICON_MUSIC" "$music_status" \
@@ -146,7 +149,7 @@ while true; do
         "$ICON_CPU" "$cpu_status" \
         "$ICON_MEM" "$mem_status" \
         "$ICON_VOL" "$vol_status" \
-        "$net_status" \
+        "$NET_STATUS_STR" \
         "$ICON_TIME" "$time_status" \
         "$ime_status"
 
