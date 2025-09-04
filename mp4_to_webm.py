@@ -19,6 +19,7 @@ FFMPEG_PARAMS = [
     '-crf', '31',
     '-b:v', '0',
     '-cpu-used', '4',
+    '-threads', '2',
     '-c:a', 'libopus',
     '-b:a', '192k'
 ]
