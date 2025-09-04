@@ -22,31 +22,42 @@ NET_RX_FILE="/sys/class/net/$INTERFACE/statistics/rx_bytes"
 NET_TX_FILE="/sys/class/net/$INTERFACE/statistics/tx_bytes"
 
 # 初始化网络速度计算的全局变量
-# 这些变量将在 update_net 函数内部被修改
 if [[ -n "$INTERFACE" && -r "$NET_RX_FILE" && -r "$NET_TX_FILE" ]]; then
     RX1=$(<"$NET_RX_FILE")
     TX1=$(<"$NET_TX_FILE")
 fi
-
+# 全局变量，用于存储网络状态的最终字符串
+NET_STATUS_STR=""
 # 初始化CPU使用率计算的全局变量
-read cpu1 idle1 <<< $(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5; exit}' /proc/stat)
+read prev_cpu prev_idle <<< $(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5; exit}' /proc/stat)
 
+# --- 【新增】为 CPU 状态创建一个全局变量 ---
+CPU_STATUS=""
 
 # --- 函数定义 (Functions) ---
-# 将每个信息块封装成独立的函数，提高可读性和可维护性
 
+# --- 【已修改】CPU 更新函数 ---
 update_cpu() {
-    read cpu2 idle2 <<< $(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5; exit}' /proc/stat)
-    total=$((cpu2 - cpu1))
-    idle=$((idle2 - idle1))
-    if (( total > 0 )); then
-        usage=$(( (100 * (total - idle)) / total ))
+    # 读取当前的 CPU 时间
+    read curr_cpu curr_idle <<< $(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5; exit}' /proc/stat)
+
+    # 计算自上次检查以来的时间差
+    total_diff=$((curr_cpu - prev_cpu))
+    idle_diff=$((curr_idle - prev_idle))
+
+    # 计算使用率
+    if (( total_diff > 0 )); then
+        usage=$(( (100 * (total_diff - idle_diff)) / total_diff ))
     else
         usage=0
     fi
-    cpu1=$cpu2
-    idle1=$idle2
-    printf "%02d%%" "$usage"
+
+    # 【重要】更新全局的 prev 变量，为下一次计算做准备
+    prev_cpu=$curr_cpu
+    prev_idle=$curr_idle
+
+    # 【重要】不再 printf 到标准输出，而是直接设置全局变量 CPU_STATUS
+    CPU_STATUS=$(printf "%02d%%" "$usage")
 }
 
 update_mem() {
@@ -82,8 +93,7 @@ update_ime() {
     esac
 }
 
-# 全局变量，用于存储网络状态的最终字符串
-NET_STATUS_STR=""
+
 
 update_net() {
     # 检查网络是否初始化成功
@@ -92,35 +102,30 @@ update_net() {
         return
     fi
 
-    # 定义局部变量
     local RX2 TX2 RX_DIFF TX_SPEED RX_SPEED
     
-    # 读取当前的网络字节数
     RX2=$(<"$NET_RX_FILE")
     TX2=$(<"$NET_TX_FILE")
 
-    # 计算自上次检查以来的字节差值 (Bytes/Second)
     RX_DIFF=$((RX2 - RX1))
     TX_DIFF=$((TX2 - TX1))
 
-    # 将 Bytes/sec 转换为整数 Mbps
-    # 公式: (Bytes * 8 bits/Byte) / 1,000,000 bits/Megabit
     RX_SPEED=$(( (RX_DIFF * 8) / 1000000 ))
     TX_SPEED=$(( (TX_DIFF * 8) / 1000000 ))
 
-    # 直接更新全局变量 RX1 和 TX1，为下一次计算做准备
     RX1=$RX2
     TX1=$TX2
 
-    # 不再 printf 到标准输出，而是直接设置全局变量 NET_STATUS_STR
     NET_STATUS_STR=$(printf "%s %dMbps %s %dMbps" "$ICON_NET_DOWN" "$RX_SPEED" "$ICON_NET_UP" "$TX_SPEED")
 }
 
 
 # --- 主循环 (Main Loop) ---
 while true; do
-    # 调用函数获取所有状态
-    cpu_status=$(update_cpu)
+    # 【已修改】直接调用 update_cpu 函数。它会更新全局的 prev_cpu, prev_idle 和 CPU_STATUS
+    update_cpu
+    
+    # 其他函数依然可以这样调用，因为它们不依赖于在循环间保持状态
     mem_status=$(update_mem)
     temp_status=$(update_temp)
     vol_status=$(update_volume)
@@ -137,7 +142,7 @@ while true; do
         "$ICON_ARCH" "$ARCH" \
         "$ICON_MUSIC" "$music_status" \
         "$ICON_TEMP" "$temp_status" \
-        "$ICON_CPU" "$cpu_status" \
+        "$ICON_CPU" "$CPU_STATUS" \
         "$ICON_MEM" "$mem_status" \
         "$ICON_VOL" "$vol_status" \
         "$NET_STATUS_STR" \
