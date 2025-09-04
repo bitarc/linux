@@ -29,32 +29,23 @@ if [[ -n "$INTERFACE" && -r "$NET_RX_FILE" && -r "$NET_TX_FILE" ]]; then
 fi
 
 # 初始化CPU使用率计算的全局变量
-read -r CPU_PREV_TOTAL CPU_PREV_IDLE < <(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5}' /proc/stat)
+read cpu1 idle1 <<< $(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5; exit}' /proc/stat)
 
 
 # --- 函数定义 (Functions) ---
 # 将每个信息块封装成独立的函数，提高可读性和可维护性
 
 update_cpu() {
-    local cpu_total cpu_idle total_diff idle_diff usage
-    # 读取当前CPU时间
-    read -r cpu_total cpu_idle < <(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5}' /proc/stat)
-
-    # 计算差值
-    total_diff=$((cpu_total - CPU_PREV_TOTAL))
-    idle_diff=$((cpu_idle - CPU_PREV_IDLE))
-
-    # 计算使用率
-    if (( total_diff > 0 )); then
-        usage=$(( (100 * (total_diff - idle_diff)) / total_diff ))
+    read cpu2 idle2 <<< $(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5; exit}' /proc/stat)
+    total=$((cpu2 - cpu1))
+    idle=$((idle2 - idle1))
+    if (( total > 0 )); then
+        usage=$(( (100 * (total - idle)) / total ))
     else
         usage=0
     fi
-    
-    # 更新上一次的值 (修改全局变量)
-    CPU_PREV_TOTAL=$cpu_total
-    CPU_PREV_IDLE=$cpu_idle
-
+    cpu1=$cpu2
+    idle1=$idle2
     printf "%02d%%" "$usage"
 }
 
