@@ -21,7 +21,7 @@ FFMPEG_PARAMS = [
     '-cpu-used', '4',
     '-threads', '2',
     '-c:a', 'libopus',
-    '-b:a', '128k'
+    '-b:a', '96k'
 ]
 # --- 配置区结束 ---
 
