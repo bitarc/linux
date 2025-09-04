@@ -10,7 +10,7 @@ import sys
 
 # 1. 定义要查找的视频文件扩展名 (可以根据需要添加或删除)
 #    使用小写形式，脚本会自动忽略大小写
-VIDEO_EXTENSIONS = ('.mp4', '.mkv', '.avi', 'mov', '.flv', '.wmv')
+VIDEO_EXTENSIONS = ('.mp4', '.avi')
 
 # 2. FFmpeg 参数配置
 #    您可以在这里修改 CRF, cpu-used, 音频码率等参数

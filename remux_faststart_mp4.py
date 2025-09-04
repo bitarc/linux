@@ -5,7 +5,7 @@ import shutil
 # --- 可自定义的配置 ---
 
 # 1. 定义需要处理的视频文件扩展名 (可以自行添加)
-VIDEO_EXTENSIONS = ['.mp4', '.mov', '.m4v', '.mkv']
+VIDEO_EXTENSIONS = ['.mp4']
 
 # 2. 定义存放处理后文件的子目录名称
 OUTPUT_FOLDER = 'processed'
