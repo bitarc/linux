@@ -16,7 +16,7 @@ VIDEO_EXTENSIONS = ('.mp4', '.avi')
 #    您可以在这里修改 CRF, cpu-used, 音频码率等参数
 FFMPEG_PARAMS = [
     '-c:v', 'libvpx-vp9',
-    '-crf', '33',
+    '-crf', '35',
     '-b:v', '0',
     '-cpu-used', '4',
     '-threads', '2',
