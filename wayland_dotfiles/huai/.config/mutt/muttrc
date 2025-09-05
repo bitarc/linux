@@ -16,7 +16,7 @@ set message_cachedir = "~/.cache/mutt"
 # --- 账户切换逻辑 ---
 # 默认加载第一个账户
 source "~/.config/mutt/hotmail"
-
+auto_view text/html
 # 当进入不同账户的文件夹时，自动加载对应的账户配置
 #folder-hook 'outlook1' 'source ~/.config/mutt/accounts/outlook1'
 #folder-hook 'outlook2' 'source ~/.config/mutt/accounts/outlook2'
