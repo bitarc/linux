@@ -1,4 +1,5 @@
 #!/usr/bin/sh
+export MAILCAPS="$HOME/.config/mutt/mailcap"
 export GPG_TTY=$(tty)
 umask 022
 # 通用别名配置文件
