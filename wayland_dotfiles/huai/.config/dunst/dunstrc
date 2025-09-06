@@ -344,7 +344,7 @@
     foreground = "#ffffff"
     timeout = 10
     override_pause_level = 30
-    script = play /home/user/.config/dunst/note.mp3
+    script = play /home/huai/.config/dunst/note.mp3
     # Icon for notifications with normal urgency, uncomment to enable
     #default_icon = /path/to/icon
 
