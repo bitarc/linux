@@ -18,8 +18,9 @@ FFMPEG_PARAMS = [
     '-c:v', 'libvpx-vp9',
     '-crf', '31',
     '-b:v', '0',
-    '-speed', '4',
+    '-speed', '2',
     '-threads', '2',
+    '-row-mt',  '1',
     '-c:a', 'libopus',
     '-b:a', '96k'
 ]
