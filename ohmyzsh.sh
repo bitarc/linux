@@ -28,6 +28,11 @@ else
         echo -e "${CYAN}>> Using pacman package manager${NC}"
         sudo pacman -S --noconfirm zsh
         sleep 3
+    elif command -v opkg &>/dev/null; then
+        # openwrt
+        echo -e "${CYAN}>> Using opkg package manager${NC}"
+        opkg update && opkg install zsh 
+        sleep 3   
     else
         echo -e "${RED}>> Could not detect compatible package manager. Please install zsh manually.${NC}"
         sleep 3
