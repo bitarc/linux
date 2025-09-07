@@ -1,4 +1,3 @@
-[[ $- != *i* ]] && return
 # ssh-add -l 2>/dev/null | grep -q id_ed25519 || ssh-add ~/.ssh/id_ed25519 2>/dev/null
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -91,3 +90,4 @@ fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+export GPG_TTY=$(tty)
