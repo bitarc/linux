@@ -1,5 +1,3 @@
-# 自动启动 ssh-agent 并添加 id_ed25519 密钥（如未添加）
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 # ssh-add -l 2>/dev/null | grep -q id_ed25519 || ssh-add ~/.ssh/id_ed25519 2>/dev/null
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]

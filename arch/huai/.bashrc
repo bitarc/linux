@@ -1,7 +1,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
-# 自动启动 ssh-agent 并添加 id_ed25519 密钥（如未添加）
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+
 # ssh-add -l 2>/dev/null | grep -q id_ed25519 || ssh-add ~/.ssh/id_ed25519 2>/dev/null
 
 [[ -r /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
