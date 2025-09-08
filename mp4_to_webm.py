@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 import os
 import subprocess
-import argparse
 import sys
 
 # --- 配置区 ---
 
 # 1. 定义要查找的视频文件扩展名 (可以根据需要添加或删除)
 #    使用小写形式，脚本会自动忽略大小写
-VIDEO_EXTENSIONS = ('.mp4', '.avi')
+VIDEO_EXTENSIONS = ('.mp4', '.avi', '.mkv', '.mov', '.flv', '.wmv')
 
 # 2. FFmpeg 参数配置
 #    您可以在这里修改 CRF, cpu-used, 音频码率等参数
@@ -30,7 +29,8 @@ def convert_videos(source_dir):
     """
     遍历源目录及其子目录，查找视频文件并将其在原地转换为 .webm 格式。
     """
-    print(f"[*] 开始扫描目录及其所有子目录: {source_dir}")
+    abs_source_dir = os.path.abspath(source_dir)
+    print(f"[*] 开始自动扫描目录及其所有子目录: {abs_source_dir}")
     print("-" * 50)
 
     # os.walk 会遍历指定目录下的所有文件夹和文件
@@ -64,18 +64,21 @@ def convert_videos(source_dir):
 
                 try:
                     # 使用 subprocess.run 执行命令
-                    result = subprocess.run(
-                        command, 
-                        check=True, 
-                        capture_output=True, 
-                        text=True, 
-                        encoding='utf-8'
-                    )
-                    print(f"[✔] 成功: {filename}")
+                    # 对于ffmpeg，我们通常更关心它的实时输出而不是最终结果
+                    # 所以这里我们不捕获输出，让它直接显示在终端上
+                    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, encoding='utf-8')
+                    
+                    # 实时打印 ffmpeg 的输出
+                    for line in process.stdout:
+                        print(f"    {line.strip()}")
 
-                except subprocess.CalledProcessError as e:
-                    print(f"[!] 失败: {filename}", file=sys.stderr)
-                    print(f"    错误信息: {e.stderr}", file=sys.stderr)
+                    process.wait() # 等待命令执行完成
+
+                    if process.returncode == 0:
+                        print(f"[✔] 成功: {filename}")
+                    else:
+                        print(f"[!] 失败: {filename} (ffmpeg 返回代码: {process.returncode})", file=sys.stderr)
+
                 except FileNotFoundError:
                     print("[!] 错误: ffmpeg 命令未找到。", file=sys.stderr)
                     print("    请确保 ffmpeg 已安装并已添加到系统的 PATH 环境变量中。", file=sys.stderr)
@@ -88,25 +91,20 @@ def convert_videos(source_dir):
 
 def main():
     """
-    主函数，用于解析命令行参数。
+    (全自动版)
+    主函数，直接处理当前目录。
     """
-    parser = argparse.ArgumentParser(
-        description="批量将视频文件使用 ffmpeg 转换为 VP9/Opus 的 WebM 格式，并保存在源文件相同的目录中。",
-        formatter_class=argparse.RawTextHelpFormatter
-    )
-    parser.add_argument(
-        "source_dir",
-        help="包含源视频文件的根目录，脚本将遍历此目录及其所有子目录。"
-    )
+    # --- 核心改动 ---
+    # 移除所有 argparse 相关代码
+    # 直接将源目录设置为当前目录 ('.')
+    source_directory_to_process = "."
     
-    args = parser.parse_args()
-
-    # 确保源目录存在
-    if not os.path.isdir(args.source_dir):
-        print(f"错误: 目录 '{args.source_dir}' 不存在或不是一个目录。", file=sys.stderr)
-        sys.exit(1)
-        
-    convert_videos(args.source_dir)
+    print("="*50)
+    print("      ffmpeg 全自动转换脚本已启动")
+    print("      将在当前目录及其子目录中查找视频文件")
+    print("="*50)
+    
+    convert_videos(source_directory_to_process)
     print("[*] 所有任务处理完毕。")
 
 
