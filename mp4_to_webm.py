@@ -3,6 +3,7 @@
 import os
 import subprocess
 import sys
+import platform
 
 # --- 配置区 ---
 
@@ -25,54 +26,65 @@ FFMPEG_PARAMS = [
 # --- 配置区结束 ---
 
 
+def set_terminal_title(title):
+    """
+    根据操作系统设置终端窗口的标题。
+    """
+    try:
+        if platform.system() == "Windows":
+            os.system(f'title {title}')
+        else:
+            # 适用于大多数 Linux/macOS 终端
+            sys.stdout.write(f'\x1b]2;{title}\x07')
+            sys.stdout.flush()
+    except Exception:
+        # 在某些环境下（如非 TTY 输出），此操作可能会失败，但我们可以安全地忽略它
+        pass
+
 def convert_videos(source_dir):
     """
     遍历源目录及其子目录，查找视频文件并将其在原地转换为 .webm 格式。
     """
+    original_title = "FFmpeg 全自动转换脚本"
+    set_terminal_title(original_title)
     abs_source_dir = os.path.abspath(source_dir)
     print(f"[*] 开始自动扫描目录及其所有子目录: {abs_source_dir}")
     print("-" * 50)
 
-    # os.walk 会遍历指定目录下的所有文件夹和文件
     for root, dirs, files in os.walk(source_dir):
         for filename in files:
-            # 检查文件扩展名是否在我们的目标列表中
             if filename.lower().endswith(VIDEO_EXTENSIONS):
                 input_path = os.path.join(root, filename)
-
-                # --- 构建输出路径，与源文件在同一目录 ---
                 base, ext = os.path.splitext(input_path)
                 output_path = base + '.webm'
                 
-                # --- 检查输出文件是否已存在，如果存在则跳过 ---
                 if os.path.exists(output_path):
                     print(f"[i] 跳过: 输出文件已存在 {output_path}")
                     print("-" * 50)
                     continue
 
-                print(f"[+] 正在处理: {input_path}")
+                print(f"[+] 开始处理: {input_path}")
                 print(f"    -> 输出到: {output_path}")
 
-                # --- 构建并执行 ffmpeg 命令 ---
-                # 将命令构建为一个列表，可以完美处理文件名中的空格和特殊字符
-                command = [
-                    'ffmpeg',
-                    '-i', input_path,
-                    *FFMPEG_PARAMS,
-                    output_path
-                ]
+                # --- 核心改动 1: 设置终端标题 ---
+                set_terminal_title(f"正在转换: {filename}")
+
+                command = [ 'ffmpeg', '-i', input_path, *FFMPEG_PARAMS, output_path ]
 
                 try:
-                    # 使用 subprocess.run 执行命令
-                    # 对于ffmpeg，我们通常更关心它的实时输出而不是最终结果
-                    # 所以这里我们不捕获输出，让它直接显示在终端上
-                    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, encoding='utf-8')
+                    process = subprocess.Popen(
+                        command, 
+                        stdout=subprocess.PIPE, 
+                        stderr=subprocess.STDOUT, 
+                        universal_newlines=True, 
+                        encoding='utf-8'
+                    )
                     
-                    # 实时打印 ffmpeg 的输出
+                    # --- 核心改动 2: 为 FFmpeg 的每一行输出添加前缀 ---
                     for line in process.stdout:
-                        print(f"    {line.strip()}")
+                        print(f"    [{filename}] {line.strip()}")
 
-                    process.wait() # 等待命令执行完成
+                    process.wait()
 
                     if process.returncode == 0:
                         print(f"[✔] 成功: {filename}")
@@ -85,6 +97,9 @@ def convert_videos(source_dir):
                     sys.exit(1)
                 except Exception as e:
                     print(f"[!] 发生未知错误: {e}", file=sys.stderr)
+                finally:
+                    # 确保无论成功还是失败，都重置终端标题
+                    set_terminal_title(original_title)
 
                 print("-" * 50)
 
@@ -94,14 +109,12 @@ def main():
     (全自动版)
     主函数，直接处理当前目录。
     """
-    # --- 核心改动 ---
-    # 移除所有 argparse 相关代码
-    # 直接将源目录设置为当前目录 ('.')
     source_directory_to_process = "."
     
     print("="*50)
     print("      ffmpeg 全自动转换脚本已启动")
     print("      将在当前目录及其子目录中查找视频文件")
+    print("      (增强状态显示版)")
     print("="*50)
     
     convert_videos(source_directory_to_process)
