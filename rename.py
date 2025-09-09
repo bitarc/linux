@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 def smart_rename_webm_files_auto(root_directory):
     """
     (全自动版 - 仅处理.webm文件)
@@ -14,7 +15,7 @@ def smart_rename_webm_files_auto(root_directory):
 
     for dirpath, dirnames, filenames in os.walk(root_directory):
         counter = 1
-        
+
         print(f"--- 正在处理文件夹: {dirpath} ---")
 
         # 筛选出所有webm文件并排序，以便处理
@@ -35,9 +36,9 @@ def smart_rename_webm_files_auto(root_directory):
         # 仅处理筛选出来的webm文件
         for filename in webm_files:
             base_filename = filename
-            
+
             try:
-                prefix, rest_of_name = filename.split('_', 1)
+                prefix, rest_of_name = filename.split("_", 1)
                 if prefix.isdigit():
                     print(f"   检测到旧前缀 '{prefix}_'，将从 '{filename}' 中移除。")
                     base_filename = rest_of_name
@@ -56,7 +57,7 @@ def smart_rename_webm_files_auto(root_directory):
                     print(f"   错误：重命名文件 '{filename}' 时出错: {e}")
             else:
                 print(f"   文件名 '{filename}' 无需更改。")
-            
+
             counter += 1
 
     print("\n处理完成！")
