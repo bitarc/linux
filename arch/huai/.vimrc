@@ -7,6 +7,9 @@ call plug#begin('~/.vim/plugged')
 
 " GitHub Copilot 插件
 Plug 'github/copilot.vim'
+" Python 代码格式化工具 Black
+Plug 'psf/black'
 
 call plug#end()
-
+" 自动格式化 Python 代码
+autocmd BufWritePre *.py Black
