@@ -71,11 +71,37 @@ alias ax6s="ssh_add_check; ssh root@192.168.31.2"
 # Git相关
 alias gaa='git add -A'
 alias gc='git commit -v'
-alias codeberg='ssh_add_check; git push codeberg'
-alias github='ssh_add_check; git push github'
 alias gpl='ssh_add_check; git pull'
 alias gcl='ssh_add_check; git clone'
+# 用于 codeberg 的推送函数
+codeberg() {
+  # 首先执行 ssh_add_check 命令
+  ssh_add_check
+  
+  # 检查函数调用时是否附加了参数
+  if [ $# -eq 0 ]; then
+    # 如果没有参数 ($# 等于 0), 则默认推送 'main' 分支
+    git push codeberg main
+  else
+    # 如果有参数, 则将所有参数 ("$@") 传递给 git push 命令
+    git push codeberg "$@"
+  fi
+}
 
+# 用于 github 的推送函数
+github() {
+  # 首先执行 ssh_add_check 命令
+  ssh_add_check
+  
+  # 检查函数调用时是否附加了参数
+  if [ $# -eq 0 ]; then
+    # 如果没有参数 ($# 等于 0), 则默认推送 'main' 分支
+    git push github main
+  else
+    # 如果有参数, 则将所有参数 ("$@") 传递给 git push 命令
+    git push github "$@"
+  fi
+}
 # 检查 SSH 代理并自动添加密钥
 ssh_add_check() {
     if [ -z "$(ssh-add -l 2>/dev/null | grep -v 'The agent has no identities.')" ]; then
