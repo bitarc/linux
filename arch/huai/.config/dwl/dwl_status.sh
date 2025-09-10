@@ -94,7 +94,7 @@ update_volume() {
 }
 update_music() {
     # 检查 mpc (Music Player Client) 进程是否正在运行
-    if pgrep -x "mpc" >/dev/null; then
+    if mpc status | grep -q "\[playing\]"; then
         local music
         music=$(mpc current 2>/dev/null | cut -d'-' -f2 | sed 's/^ *//')
         # 如果进程在运行，则获取状态
