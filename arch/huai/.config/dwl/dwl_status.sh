@@ -20,7 +20,11 @@ ICON_VOL=""
 ICON_NET_DOWN=""
 ICON_NET_UP=""
 ICON_TIME="󰃰"
-
+# --- 颜色定义 (Color Definitions for Bar Patch) ---
+C_NORM="^fg(00ff00)"   # 绿色 (正常)
+C_WARN="^fg(ffff00)"   # 黄色 (警告)
+C_CRIT="^fg(ff0000)"   # 红色 (严重)
+C_RESET="^fg()"       # 重置颜色
 # --- 初始化 (Initialization) ---
 ARCH=$(uname -r | cut -d'-' -f1)
 INTERFACE=$(ip route | awk '/default/ {print $5; exit}')
@@ -58,9 +62,30 @@ update_mem() {
     MEM_STATUS=$(awk '/^MemTotal:/ {t=$2/1024} /^MemAvailable:/ {a=$2/1024} END {printf "%d/%dMB", (t-a), t}' /proc/meminfo)
 }
 update_temp() {
-    local temp
-    temp=$(sensors 2>/dev/null | awk '/Core 0|Package id 0|CPU/ {for(i=1;i<=NF;i++) if($i~/\+[0-9]+\.[0-9]+°C/) {gsub(/\+|°C/,"",$i); printf "%.0f°C",$i; exit}}')
-    TEMP_STATUS=${temp:-"N/A"}
+    # 仅提取温度的纯数字，用于后续比较
+    local temp_val
+    temp_val=$(sensors 2>/dev/null | awk '/Core 0|Package id 0|CPU/ {for(i=1;i<=NF;i++) if($i~/\+[0-9]+\.[0-9]+°C/) {gsub(/\+|°C/,"",$i); print $i; exit}}')
+
+    # 如果没有读到温度，显示 N/A
+    if [[ -z "$temp_val" ]]; then
+        TEMP_STATUS="N/A"
+        return
+    fi
+
+    # 将温度值转为整数（去掉小数点后的部分）
+    local temp_int=${temp_val%.*}
+
+    # 根据阈值判断并用颜色代码包裹输出
+    if (( temp_int >= 80 )); then
+        # 严重阈值 (>= 80°C)，使用红色
+        TEMP_STATUS="${ICON_TEMP} ${C_CRIT}${temp_int}°C${C_RESET}"
+    elif (( temp_int >= 65 )); then
+        # 警告阈值 (>= 65°C)，使用黄色
+        TEMP_STATUS="${ICON_TEMP} ${C_WARN}${temp_int}°C${C_RESET}"
+    else
+        # 正常范围，不加颜色
+        TEMP_STATUS="${ICON_TEMP} ${temp_int}°C"
+    fi
 }
 update_volume() {
     local vol
@@ -111,7 +136,7 @@ print_status_bar() {
     fi
 
     # 添加其余模块
-    parts+=("${ICON_TEMP} ${TEMP_STATUS}")
+    # parts+=("${ICON_TEMP} ${TEMP_STATUS}")
     parts+=("${ICON_CPU} ${CPU_STATUS}")
     parts+=("${ICON_MEM} ${MEM_STATUS}")
     parts+=("${ICON_VOL} ${VOL_STATUS}")
