@@ -83,8 +83,8 @@ update_temp() {
         # 警告阈值 (>= 65°C)，使用黄色
         TEMP_STATUS="${ICON_TEMP} ${C_WARN}${temp_int}°C${C_RESET}"
     else
-        # 正常范围，不加颜色
-        TEMP_STATUS="${ICON_TEMP} ${temp_int}°C"
+        # 正常范围，使用绿色
+        TEMP_STATUS="${ICON_TEMP} ${C_NORM}${temp_int}°C${C_RESET}"
     fi
 }
 update_volume() {
