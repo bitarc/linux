@@ -137,6 +137,7 @@ print_status_bar() {
 
     # 添加其余模块
     # parts+=("${ICON_TEMP} ${TEMP_STATUS}")
+    parts+=("${TEMP_STATUS}")
     parts+=("${ICON_CPU} ${CPU_STATUS}")
     parts+=("${ICON_MEM} ${MEM_STATUS}")
     parts+=("${ICON_VOL} ${VOL_STATUS}")
