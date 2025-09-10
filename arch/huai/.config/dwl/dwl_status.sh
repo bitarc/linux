@@ -93,14 +93,14 @@ update_volume() {
     VOL_STATUS=$(printf "%02d%%" "${vol:-50}")
 }
 update_music() {
-    # 检查 mpd (Music Player Daemon) 服务是否正在运行
-    if pgrep -x "mpd" >/dev/null; then
+    # 检查 mpc (Music Player Client) 进程是否正在运行
+    if pgrep -x "mpc" >/dev/null; then
         local music
         music=$(mpc current 2>/dev/null | cut -d'-' -f2 | sed 's/^ *//')
-        # 如果服务在运行，则获取状态
+        # 如果进程在运行，则获取状态
         MUSIC_STATUS="[${music:-Off}]"
     else
-        # 如果服务未运行，则状态为空
+        # 如果进程未运行，则状态为空
         MUSIC_STATUS=""
     fi
 }
