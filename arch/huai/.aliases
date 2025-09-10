@@ -40,8 +40,14 @@ alias cdwww="mount-data; cd /data/www"
 # 音频控制
 alias 0="pactl set-default-sink alsa_output.usb-DeSheng_Electronics_Inc._Star_Y360-00.analog-stereo"
 alias 1="pactl set-default-sink alsa_output.usb-Generic_USB2.0_Device_20130100ph0-00.analog-stereo"
+
 vol() {
-    pactl set-sink-volume @DEFAULT_SINK@ ${1}%
+    pactl set-sink-volume @DEFAULT_SINK@ "${1}%"
+    local PID_FILE="${XDG_RUNTIME_DIR}/dwl_status.pid"
+    local SIGNAL_NUM=36 # SIGRTMIN+2
+    if [ -f "$PID_FILE" ]; then
+        kill -"$SIGNAL_NUM" "$(cat "$PID_FILE")"
+    fi
 }
 alias volup="vol +10%"
 alias voldown="vol -10%"
