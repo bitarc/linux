@@ -70,14 +70,13 @@ update_volume() {
 update_music() {
     # 检查 mpd (Music Player Daemon) 服务是否正在运行
     if pgrep -x "mpd" >/dev/null; then
-        # 如果服务在运行，则获取当前歌曲信息
         local music
         music=$(mpc current 2>/dev/null | cut -d'-' -f2 | sed 's/^ *//')
-        # 如果有歌曲，显示歌名；否则显示 "Stopped"
-        MUSIC_STATUS="[${music:-Stopped}]"
+        # 如果服务在运行，则获取状态
+        MUSIC_STATUS="[${music:-Off}]"
     else
-        # 如果服务未运行，则显示 "[Off]"
-        MUSIC_STATUS="[Off]"
+        # 如果服务未运行，则状态为空
+        MUSIC_STATUS=""
     fi
 }
 update_ime() {
@@ -100,10 +99,29 @@ update_net() {
 
 # --- 状态栏打印函数 ---
 print_status_bar() {
-    printf "%s %s|%s %s|%s %s|%s %s|%s %s|%s %s|%s|%s %s|%s\n" \
-        "$ICON_ARCH" "$ARCH" "$ICON_MUSIC" "$MUSIC_STATUS" "$ICON_TEMP" "$TEMP_STATUS" \
-        "$ICON_CPU" "$CPU_STATUS" "$ICON_MEM" "$MEM_STATUS" "$ICON_VOL" "$VOL_STATUS" \
-        "$NET_STATUS_STR" "$ICON_TIME" "$TIME_STATUS" "$IME_STATUS"
+    # 使用一个数组来存储状态栏的各个模块
+    local parts=()
+
+    # 模块1: 内核版本 (始终显示)
+    parts+=("${ICON_ARCH} ${ARCH}")
+
+    # 模块2: 音乐 (仅当 MUSIC_STATUS 非空时显示)
+    if [[ -n "$MUSIC_STATUS" ]]; then
+        parts+=("${ICON_MUSIC} ${MUSIC_STATUS}")
+    fi
+
+    # 添加其余模块
+    parts+=("${ICON_TEMP} ${TEMP_STATUS}")
+    parts+=("${ICON_CPU} ${CPU_STATUS}")
+    parts+=("${ICON_MEM} ${MEM_STATUS}")
+    parts+=("${ICON_VOL} ${VOL_STATUS}")
+    parts+=("${NET_STATUS_STR}")
+    parts+=("${ICON_TIME} ${TIME_STATUS}")
+    parts+=("${IME_STATUS}")
+
+    # 使用 "|" 作为分隔符，将数组中的所有模块连接成一个字符串并打印
+    local IFS="|"
+    printf "%s\n" "${parts[*]}"
 }
 
 # --- 信号陷阱 (Signal Trap) ---
