@@ -21,7 +21,7 @@ connect_to_host() {
     notify-send "连接中" "启动 RDP..." && play ~/.config/dunst/connecting.mp3 >/dev/null 2>&1
     
     # 启动 RDP 连接并获取进程 ID
-    wlfreerdp3 /v:"$TARGET_IP" /u:huai /p:110 /sound /dynamic-resolution /cert:ignore >/dev/null 2>&1 &
+    sdl-freerdp3 /v:"$TARGET_IP" /u:huai /p:110 /w:1920 /h:1080 /sound /cert:ignore >/dev/null 2>&1 & 
     RDP_PID=$!
     
     # 等待几秒钟检查连接状态
