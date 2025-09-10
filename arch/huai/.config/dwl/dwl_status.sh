@@ -68,9 +68,17 @@ update_volume() {
     VOL_STATUS=$(printf "%02d%%" "${vol:-50}")
 }
 update_music() {
-    local music
-    music=$(mpc current 2>/dev/null | cut -d'-' -f2 | sed 's/^ *//')
-    MUSIC_STATUS="[${music:-Stopped}]"
+    # 检查 mpd (Music Player Daemon) 服务是否正在运行
+    if pgrep -x "mpd" >/dev/null; then
+        # 如果服务在运行，则获取当前歌曲信息
+        local music
+        music=$(mpc current 2>/dev/null | cut -d'-' -f2 | sed 's/^ *//')
+        # 如果有歌曲，显示歌名；否则显示 "Stopped"
+        MUSIC_STATUS="[${music:-Stopped}]"
+    else
+        # 如果服务未运行，则显示 "[Off]"
+        MUSIC_STATUS="[Off]"
+    fi
 }
 update_ime() {
     case $(fcitx5-remote 2>/dev/null) in
