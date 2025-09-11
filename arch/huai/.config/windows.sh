@@ -1,6 +1,16 @@
 #!/usr/bin/sh
 # 将整个脚本逻辑放入后台执行
 (
+# --- NEW: Check if password argument is provided ---
+if [ -z "$1" ]; then
+    # Use notify-send for consistency, but also echo to stderr for command-line feedback
+    (notify-send "脚本错误" "请提供密码作为参数。")
+    echo "Usage: $0 <password>" >&2
+    exit 1
+fi
+
+# --- NEW: Store the password from the first argument ---
+PASSWORD="$1"
 
 # 目标主机信息（直接使用IP地址）
 TARGET_IP="192.168.31.15"
@@ -21,7 +31,7 @@ connect_to_host() {
     notify-send "连接中" "启动 RDP..." && play ~/.config/dunst/connecting.mp3 >/dev/null 2>&1
     
     # 启动 RDP 连接并获取进程 ID
-    sdl-freerdp3 /v:"$TARGET_IP" /u:huai /p:110 /w:1920 /h:1080 /sound /cert:ignore >/dev/null 2>&1 & 
+    sdl-freerdp3 /v:"$TARGET_IP" /u:huai /p:"$PASSWORD" /w:1920 /h:1080 /sound /cert:ignore >/dev/null 2>&1 & 
     RDP_PID=$!
     
     # 等待几秒钟检查连接状态
