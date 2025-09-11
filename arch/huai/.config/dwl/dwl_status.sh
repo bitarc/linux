@@ -27,19 +27,26 @@ C_CRIT="^fg(ff0000)"   # 红色 (严重)
 C_RESET="^fg()"       # 重置颜色
 # --- 初始化 (Initialization) ---
 ARCH=$(uname -r | cut -d'-' -f1)
-INTERFACE=$(ip route | awk '/default/ {print $5; exit}')
+INTERFACE=enp0s31f6  # 请根据实际情况修改为你的网络接口名称
 
-if [[ -n "$INTERFACE" ]]; then
-    NET_RX_FILE="/sys/class/net/$INTERFACE/statistics/rx_bytes"
-    NET_TX_FILE="/sys/class/net/$INTERFACE/statistics/tx_bytes"
-    if [[ -r "$NET_RX_FILE" && -r "$NET_TX_FILE" ]]; then
-        RX1=$(<"$NET_RX_FILE")
-        TX1=$(<"$NET_TX_FILE")
-    fi
+NET_RX_FILE="/sys/class/net/$INTERFACE/statistics/rx_bytes"
+NET_TX_FILE="/sys/class/net/$INTERFACE/statistics/tx_bytes"
+
+if [[ -r "$NET_RX_FILE" && -r "$NET_TX_FILE" ]]; then
+    # 如果文件可读，说明接口有效，读取初始流量值
+    RX1=$(<"$NET_RX_FILE")
+    TX1=$(<"$NET_TX_FILE")
 else
-    NET_STATUS_STR="No Interface"
+    # 任何导致文件不可读的情况（接口名为空、接口不存在等）
+    # 都会执行这里
+    NET_STATUS_STR="N/A"
 fi
-read -r prev_cpu prev_idle <<< "$(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5; exit}' /proc/stat)"
+# 读取/proc/stat中'cpu'开头的行到各个独立的变量中
+read -r _ cpu_user cpu_nice cpu_system cpu_idle cpu_iowait cpu_irq cpu_softirq _ < /proc/stat
+
+# 计算初始的总CPU时间和空闲时间，并赋值给 prev_cpu 和 prev_idle
+prev_cpu=$((cpu_user + cpu_nice + cpu_system + cpu_idle + cpu_iowait + cpu_irq + cpu_softirq))
+prev_idle=$cpu_idle
 
 # --- 全局状态变量 ---
 CPU_STATUS="" MEM_STATUS="" TEMP_STATUS="" VOL_STATUS=""
@@ -48,13 +55,21 @@ NET_STATUS_STR=${NET_STATUS_STR:-""}
 
 # --- 函数定义 (Functions) ---
 update_cpu() {
-    read -r curr_cpu curr_idle <<< "$(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5; exit}' /proc/stat)"
+    # 直接用 read 读取 cpu 那一行，效率极高
+    read -r _ cpu_user cpu_nice cpu_system cpu_idle cpu_iowait cpu_irq cpu_softirq _ < /proc/stat
+
+    # 计算当前的总时间和空闲时间
+    local curr_cpu=$((cpu_user + cpu_nice + cpu_system + cpu_idle + cpu_iowait + cpu_irq + cpu_softirq))
+    local curr_idle=$cpu_idle
+
+    # 后续的计算逻辑保持不变...
     total_diff=$((curr_cpu - prev_cpu)); idle_diff=$((curr_idle - prev_idle))
     if [ "$total_diff" -gt 0 ]; then
         usage=$(( (100 * (total_diff - idle_diff)) / total_diff ))
     else
         usage=0
     fi
+    # 更新全局变量
     prev_cpu=$curr_cpu; prev_idle=$curr_idle
     CPU_STATUS=$(printf "%02d%%" "$usage")
 }
@@ -111,7 +126,7 @@ update_ime() {
     esac
 }
 update_time() {
-    TIME_STATUS=$(date "+%a %b %d %H:%M")
+    TIME_STATUS=$(printf "%(%a %b %d %H:%M)T")
 }
 update_net() {
     if [[ -z "$RX1" ]]; then NET_STATUS_STR=${NET_STATUS_STR:-"N/A"}; return; fi
