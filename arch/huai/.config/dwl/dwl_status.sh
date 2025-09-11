@@ -126,7 +126,7 @@ update_ime() {
     esac
 }
 update_time() {
-    TIME_STATUS=$(printf "%(%a %b %d %H:%M)T")
+    TIME_STATUS=$(printf "%(%a %b %d %H:%M)T" -1)
 }
 update_net() {
     if [[ -z "$RX1" ]]; then NET_STATUS_STR=${NET_STATUS_STR:-"N/A"}; return; fi
