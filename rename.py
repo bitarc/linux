@@ -1,12 +1,11 @@
 import os
 import sys
 
-
-def smart_rename_webm_files_auto(root_directory):
+def smart_rename_webm_files_custom_prefix(root_directory):
     """
-    (全自动版 - 仅处理.webm文件)
-    遍历目录及子目录，为每个目录内的 .webm 文件独立添加 "1_" 起始的数字前缀。
-    - 如果文件已存在 "数字_" 格式的前缀，会先移除旧前缀再添加新前缀。
+    (全自动版 - 仅处理.webm文件，自定义前缀)
+    遍历目录及子目录，为每个目录内的 .webm 文件独立添加 "E01_" 起始的格式前缀。
+    - 如果文件已存在 "数字_" 或 "E+数字_" 格式的前缀，会先移除旧前缀再添加新前缀。
     - 自动跳过所有非 ".webm" 结尾的文件。
     """
     # 将 '.' 转换为绝对路径，以便打印更清晰的日志
@@ -23,7 +22,6 @@ def smart_rename_webm_files_auto(root_directory):
 
         if not webm_files:
             print("   此文件夹中没有 .webm 文件可处理。")
-            # 打印出被跳过的非webm文件列表（可选，但对用户更友好）
             if filenames:
                 print(f"   (跳过了 {len(filenames)} 个非webm文件)")
             continue
@@ -39,14 +37,22 @@ def smart_rename_webm_files_auto(root_directory):
 
             try:
                 prefix, rest_of_name = filename.split("_", 1)
-                if prefix.isdigit():
+                # 检查旧格式 (e.g., "1_") 或新格式 (e.g., "E01_")
+                is_old_prefix = prefix.isdigit()
+                is_new_prefix = prefix.startswith('E') and prefix[1:].isdigit()
+
+                if is_old_prefix or is_new_prefix:
                     print(f"   检测到旧前缀 '{prefix}_'，将从 '{filename}' 中移除。")
                     base_filename = rest_of_name
             except ValueError:
+                # 文件名中没有下划线，所以没有前缀
                 pass
 
             old_file_path = os.path.join(dirpath, filename)
-            new_filename = f"{counter}_{base_filename}"
+            
+            # --- 主要修改在这里 ---
+            # 使用f-string格式化，:02d 表示一个至少2位的整数，不足则用0填充
+            new_filename = f"E{counter:02d}_{base_filename}"
             new_file_path = os.path.join(dirpath, new_filename)
 
             if old_file_path != new_file_path:
@@ -74,4 +80,4 @@ if __name__ == "__main__":
     directory_to_process = "."
 
     # 直接调用主函数
-    smart_rename_webm_files_auto(directory_to_process)
+    smart_rename_webm_files_custom_prefix(directory_to_process)
