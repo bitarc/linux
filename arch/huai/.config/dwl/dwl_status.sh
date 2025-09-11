@@ -106,7 +106,8 @@ update_music() {
 }
 update_ime() {
     case $(fcitx5-remote 2>/dev/null) in
-        2) IME_STATUS="CN" ;; 1) IME_STATUS="EN" ;; *) IME_STATUS="??" ;;
+        2) IME_STATUS="CN" ;;
+        *) IME_STATUS="EN" ;;
     esac
 }
 update_time() {
