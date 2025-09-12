@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/bash
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 export MAILCAPS="$HOME/.config/mutt/mailcap"
 export GPG_TTY=$(tty)
@@ -35,7 +35,8 @@ alias cddata="mount-data; cd /data"
 alias cdappdata="mount-data; cd /data/appdata"
 alias cdusb="cd /home/huai/usb"
 alias cdwww="mount-data; cd /data/www"
-
+alias cdmedia="mount-data; cd /data/media"
+alias cdmutt="cd /home/huai/.config/mutt"
 
 # 音频控制
 alias 0="pactl set-default-sink alsa_output.usb-DeSheng_Electronics_Inc._Star_Y360-00.analog-stereo"
