@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # 包装脚本：切换 fcitx5 输入法，并发送信号通知 dwl_status 刷新
 
