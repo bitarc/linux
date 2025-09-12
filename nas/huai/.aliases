@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/bash
 
 export LANG=en_US.UTF-8
 export VISUAL=vim
@@ -12,3 +12,5 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias gcl='git clone'
 alias gpl='git pull'
+alias ..='cd ..'
+
