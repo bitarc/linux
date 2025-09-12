@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 def smart_rename_webm_files_custom_prefix(root_directory):
     """
     (全自动版 - 仅处理.webm文件，自定义前缀)
@@ -39,7 +40,7 @@ def smart_rename_webm_files_custom_prefix(root_directory):
                 prefix, rest_of_name = filename.split("_", 1)
                 # 检查旧格式 (e.g., "1_") 或新格式 (e.g., "E01_")
                 is_old_prefix = prefix.isdigit()
-                is_new_prefix = prefix.startswith('E') and prefix[1:].isdigit()
+                is_new_prefix = prefix.startswith("E") and prefix[1:].isdigit()
 
                 if is_old_prefix or is_new_prefix:
                     print(f"   检测到旧前缀 '{prefix}_'，将从 '{filename}' 中移除。")
@@ -49,7 +50,7 @@ def smart_rename_webm_files_custom_prefix(root_directory):
                 pass
 
             old_file_path = os.path.join(dirpath, filename)
-            
+
             # --- 主要修改在这里 ---
             # 使用f-string格式化，:02d 表示一个至少2位的整数，不足则用0填充
             new_filename = f"E{counter:02d}_{base_filename}"
