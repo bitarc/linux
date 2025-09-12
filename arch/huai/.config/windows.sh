@@ -16,7 +16,7 @@ PASSWORD="$1"
 TARGET_IP="192.168.31.15"
 MAC_ADDRESS="00:23:24:67:DF:14"
 INTERFACE="enp0s31f6"
-MAX_TRIES=15
+MAX_TRIES=10
 
 # 检查必要命令是否安装
 for cmd in arping wakeonlan wlfreerdp3 notify-send; do
