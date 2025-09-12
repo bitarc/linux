@@ -125,8 +125,8 @@ update_music() {
 }
 update_ime() {
     case $(fcitx5-remote 2>/dev/null) in
-        2) IME_STATUS="${C_NORM}CN${C_RESET}" ;;
-        *) IME_STATUS="${C_WARN}EN${C_RESET}" ;;
+        2) IME_STATUS="${C_WARN}CN${C_RESET}" ;;
+        *) IME_STATUS="${C_NORM}EN${C_RESET}" ;;
     esac
 }
 update_time() {
