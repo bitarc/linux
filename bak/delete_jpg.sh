@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Define three path options
 path1="/home/huai/data/Downloads/mv"

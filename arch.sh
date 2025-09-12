@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Default values
 DISK="/dev/nvme0n1"

@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/env bash
 # 将整个脚本逻辑放入后台执行
 (
 # 目标主机信息

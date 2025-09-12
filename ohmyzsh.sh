@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Define color variables
 GREEN='\033[0;32m'    # Success messages

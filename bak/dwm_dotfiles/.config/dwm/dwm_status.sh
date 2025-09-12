@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # 获取网络接口名称（在循环外执行一次）
 INTERFACE=$(ip route | awk '/default/ {print $5; exit}')

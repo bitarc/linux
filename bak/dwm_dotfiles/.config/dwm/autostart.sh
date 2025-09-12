@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 play ~/.config/dunst/xp.wav &
 

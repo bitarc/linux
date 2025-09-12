@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Check if reflector is installed
 if ! command -v reflector &> /dev/null; then

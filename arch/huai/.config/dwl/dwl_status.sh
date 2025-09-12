@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # --- INI ---
 PID_FILE="${XDG_RUNTIME_DIR}/dwl_status.pid"

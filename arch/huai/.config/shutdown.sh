@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # 监测文件内容是否为1，是则关机，否则5分钟后再检测
 SHUTDOWN_FILE="http://192.168.31.21/shutdown"

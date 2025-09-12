@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 curl https://get.acme.sh | sh -s email=my@example.com
 acme.sh --issue --dns dns_cf -d example.com -d *.example.com
 

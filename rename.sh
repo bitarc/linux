@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 find . -depth -name '* *' | while IFS= read -r file; do
     mv -- "$file" "${file// /_}"
 done
