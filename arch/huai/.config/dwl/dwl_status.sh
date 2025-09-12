@@ -26,7 +26,7 @@ C_WARN="^fg(ffff00)"   # 黄色 (警告)
 C_CRIT="^fg(ff0000)"   # 红色 (严重)
 C_RESET="^fg()"       # 重置颜色
 # --- 初始化 (Initialization) ---
-ARCH=$(uname -r | cut -d'-' -f1)
+ARCH="${C_NORM}$(uname -r | cut -d'-' -f1)${C_RESET}"
 INTERFACE=enp0s31f6  # 请根据实际情况修改为你的网络接口名称
 
 NET_RX_FILE="/sys/class/net/$INTERFACE/statistics/rx_bytes"
