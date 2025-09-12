@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 while true; do
-/bin/bash /home/huai/.config/swww.sh
-sleep 180
+	/bin/bash /home/huai/.config/swww.sh
+	sleep 180
 done

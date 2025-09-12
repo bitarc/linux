@@ -22,7 +22,7 @@ sudo sbctl create-keys
 sleep 3
 
 echo -e "${YELLOW}Enrolling keys to UEFI...${NC}"
-sudo sbctl enroll-keys -m 
+sudo sbctl enroll-keys -m
 sleep 3
 
 echo -e "${YELLOW}Signing bootloader file...${NC}"
@@ -36,73 +36,73 @@ sleep 3
 echo -e "${YELLOW}Signing Linux kernels...${NC}"
 
 case $kernel_choice in
-    1)
-        # Use regular kernel
-        if [ -f /boot/vmlinuz-linux ]; then
-            echo -e "${YELLOW}Signing regular kernel...${NC}"
-            sudo sbctl sign -s /boot/vmlinuz-linux
-            
-            # Remove LTS kernel signature if exists
-            if sudo sbctl list-files | grep -q "vmlinuz-linux-lts"; then
-                echo -e "${RED}Removing LTS kernel signature...${NC}"
-                sudo sbctl remove-file /boot/vmlinuz-linux-lts
-            fi
-        else
-            echo -e "${RED}Regular kernel not found!${NC}"
-        fi
-        ;;
-    2)
-        # Use LTS kernel
-        if [ -f /boot/vmlinuz-linux-lts ]; then
-            echo -e "${YELLOW}Signing LTS kernel...${NC}"
-            sudo sbctl sign -s /boot/vmlinuz-linux-lts
-            
-            # Remove regular kernel signature if exists
-            if sudo sbctl list-files | grep -q "vmlinuz-linux" && ! sudo sbctl list-files | grep -q "vmlinuz-linux-lts"; then
-                echo -e "${RED}Removing regular kernel signature...${NC}"
-                sudo sbctl remove-file /boot/vmlinuz-linux
-            fi
-        else
-            echo -e "${RED}LTS kernel not found!${NC}"
-        fi
-        ;;
-    3)
-        # Auto detect - original logic
-        if [ -f /boot/vmlinuz-linux ]; then
-            echo -e "${YELLOW}Signing regular kernel...${NC}"
-            sudo sbctl sign -s /boot/vmlinuz-linux
-            
-            # Auto remove LTS kernel signature if it doesn't exist
-            if [ ! -f /boot/vmlinuz-linux-lts ] && sudo sbctl list-files | grep -q "vmlinuz-linux-lts"; then
-                echo -e "${RED}Auto removing old LTS kernel signature...${NC}"
-                sudo sbctl remove-file /boot/vmlinuz-linux-lts
-            fi
-        elif [ -f /boot/vmlinuz-linux-lts ]; then
-            echo -e "${YELLOW}Signing LTS kernel...${NC}"
-            sudo sbctl sign -s /boot/vmlinuz-linux-lts
-            
-            # Auto remove regular kernel signature if it doesn't exist
-            if [ ! -f /boot/vmlinuz-linux ] && sudo sbctl list-files | grep -q "vmlinuz-linux"; then
-                echo -e "${RED}Auto removing old regular kernel signature...${NC}"
-                sudo sbctl remove-file /boot/vmlinuz-linux
-            fi
-        else
-            echo -e "${RED}No kernel found!${NC}"
-        fi
-        ;;
-    *)
-        echo -e "${RED}Invalid choice, using auto detect...${NC}"
-        # Fall back to auto detect logic
-        if [ -f /boot/vmlinuz-linux ]; then
-            echo -e "${YELLOW}Signing regular kernel...${NC}"
-            sudo sbctl sign -s /boot/vmlinuz-linux
-        elif [ -f /boot/vmlinuz-linux-lts ]; then
-            echo -e "${YELLOW}Signing LTS kernel...${NC}"
-            sudo sbctl sign -s /boot/vmlinuz-linux-lts
-        else
-            echo -e "${RED}No kernel found!${NC}"
-        fi
-        ;;
+1)
+	# Use regular kernel
+	if [ -f /boot/vmlinuz-linux ]; then
+		echo -e "${YELLOW}Signing regular kernel...${NC}"
+		sudo sbctl sign -s /boot/vmlinuz-linux
+
+		# Remove LTS kernel signature if exists
+		if sudo sbctl list-files | grep -q "vmlinuz-linux-lts"; then
+			echo -e "${RED}Removing LTS kernel signature...${NC}"
+			sudo sbctl remove-file /boot/vmlinuz-linux-lts
+		fi
+	else
+		echo -e "${RED}Regular kernel not found!${NC}"
+	fi
+	;;
+2)
+	# Use LTS kernel
+	if [ -f /boot/vmlinuz-linux-lts ]; then
+		echo -e "${YELLOW}Signing LTS kernel...${NC}"
+		sudo sbctl sign -s /boot/vmlinuz-linux-lts
+
+		# Remove regular kernel signature if exists
+		if sudo sbctl list-files | grep -q "vmlinuz-linux" && ! sudo sbctl list-files | grep -q "vmlinuz-linux-lts"; then
+			echo -e "${RED}Removing regular kernel signature...${NC}"
+			sudo sbctl remove-file /boot/vmlinuz-linux
+		fi
+	else
+		echo -e "${RED}LTS kernel not found!${NC}"
+	fi
+	;;
+3)
+	# Auto detect - original logic
+	if [ -f /boot/vmlinuz-linux ]; then
+		echo -e "${YELLOW}Signing regular kernel...${NC}"
+		sudo sbctl sign -s /boot/vmlinuz-linux
+
+		# Auto remove LTS kernel signature if it doesn't exist
+		if [ ! -f /boot/vmlinuz-linux-lts ] && sudo sbctl list-files | grep -q "vmlinuz-linux-lts"; then
+			echo -e "${RED}Auto removing old LTS kernel signature...${NC}"
+			sudo sbctl remove-file /boot/vmlinuz-linux-lts
+		fi
+	elif [ -f /boot/vmlinuz-linux-lts ]; then
+		echo -e "${YELLOW}Signing LTS kernel...${NC}"
+		sudo sbctl sign -s /boot/vmlinuz-linux-lts
+
+		# Auto remove regular kernel signature if it doesn't exist
+		if [ ! -f /boot/vmlinuz-linux ] && sudo sbctl list-files | grep -q "vmlinuz-linux"; then
+			echo -e "${RED}Auto removing old regular kernel signature...${NC}"
+			sudo sbctl remove-file /boot/vmlinuz-linux
+		fi
+	else
+		echo -e "${RED}No kernel found!${NC}"
+	fi
+	;;
+*)
+	echo -e "${RED}Invalid choice, using auto detect...${NC}"
+	# Fall back to auto detect logic
+	if [ -f /boot/vmlinuz-linux ]; then
+		echo -e "${YELLOW}Signing regular kernel...${NC}"
+		sudo sbctl sign -s /boot/vmlinuz-linux
+	elif [ -f /boot/vmlinuz-linux-lts ]; then
+		echo -e "${YELLOW}Signing LTS kernel...${NC}"
+		sudo sbctl sign -s /boot/vmlinuz-linux-lts
+	else
+		echo -e "${RED}No kernel found!${NC}"
+	fi
+	;;
 esac
 
 sleep 3

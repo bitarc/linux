@@ -4,12 +4,12 @@ echo "=== Starting Vim Copilot Environment Setup ==="
 
 echo "Downloading and installing vim-plug plugin manager..."
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 echo "vim-plug installation completed!"
 
 echo "Downloading and installing GitHub Copilot.vim plugin..."
 git clone --depth=1 https://github.com/github/copilot.vim.git \
-  ~/.vim/pack/github/start/copilot.vim
+	~/.vim/pack/github/start/copilot.vim
 echo "GitHub Copilot plugin installation completed!"
 echo "=== Vim Copilot Environment Setup Completed ==="
 echo "Usage:"

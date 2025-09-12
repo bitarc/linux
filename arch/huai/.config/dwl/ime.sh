@@ -11,5 +11,5 @@ PID_FILE="${XDG_RUNTIME_DIR}/dwl_status.pid"
 SIGNAL_NUM=37 # SIGRTMIN+3
 
 if [ -f "$PID_FILE" ]; then
-    kill -"$SIGNAL_NUM" "$(cat "$PID_FILE")"
+	kill -"$SIGNAL_NUM" "$(cat "$PID_FILE")"
 fi
