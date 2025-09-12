@@ -55,52 +55,56 @@ NET_STATUS_STR=${NET_STATUS_STR:-""}
 
 # --- 函数定义 (Functions) ---
 update_cpu() {
-    # 直接用 read 读取 cpu 那一行，效率极高
+    # 1. 计算CPU使用率 (逻辑不变)
     read -r _ cpu_user cpu_nice cpu_system cpu_idle cpu_iowait cpu_irq cpu_softirq _ < /proc/stat
-
-    # 计算当前的总时间和空闲时间
     local curr_cpu=$((cpu_user + cpu_nice + cpu_system + cpu_idle + cpu_iowait + cpu_irq + cpu_softirq))
     local curr_idle=$cpu_idle
-
-    # 后续的计算逻辑保持不变...
     total_diff=$((curr_cpu - prev_cpu)); idle_diff=$((curr_idle - prev_idle))
     if [ "$total_diff" -gt 0 ]; then
         usage=$(( (100 * (total_diff - idle_diff)) / total_diff ))
     else
         usage=0
     fi
-    # 更新全局变量
     prev_cpu=$curr_cpu; prev_idle=$curr_idle
-    CPU_STATUS=$(printf "%02d%%" "$usage")
+    local usage_str=$(printf "%02d%%" "$usage")
+
+    # 2. 根据使用率决定颜色
+    local color_code="$C_NORM" # 默认为正常颜色
+    if (( usage >= 90 )); then
+        color_code="$C_CRIT" # 严重 (>90%)：红色
+    elif (( usage >= 75 )); then
+        color_code="$C_WARN" # 警告 (>75%)：黄色
+    fi
+
+    # 3. 组合最终输出
+    CPU_STATUS="${color_code}${usage_str}${C_RESET}"
 }
 update_mem() {
     MEM_STATUS=$(awk '/^MemTotal:/ {t=$2/1024} /^MemAvailable:/ {a=$2/1024} END {printf "%d/%dMB", (t-a), t}' /proc/meminfo)
 }
 update_temp() {
-    # 仅提取温度的纯数字，用于后续比较
     local temp_val
     temp_val=$(sensors 2>/dev/null | awk '/Core 0|Package id 0|CPU/ {for(i=1;i<=NF;i++) if($i~/\+[0-9]+\.[0-9]+°C/) {gsub(/\+|°C/,"",$i); print $i; exit}}')
 
-    # 如果没有读到温度，显示 N/A
     if [[ -z "$temp_val" ]]; then
         TEMP_STATUS="N/A"
         return
     fi
 
-    # 将温度值转为整数（去掉小数点后的部分）
     local temp_int=${temp_val%.*}
+    
+    # 1. 设置默认颜色为“正常”
+    local color_code="$C_NORM"
 
-    # 根据阈值判断并用颜色代码包裹输出
+    # 2. 根据温度阈值（65°C 和 80°C）更新颜色
     if (( temp_int >= 80 )); then
-        # 严重阈值 (>= 80°C)，使用红色
-        TEMP_STATUS="${ICON_TEMP} ${C_CRIT}${temp_int}°C${C_RESET}"
+        color_code="$C_CRIT" # 严重 (>= 80°C)：红色
     elif (( temp_int >= 65 )); then
-        # 警告阈值 (>= 65°C)，使用黄色
-        TEMP_STATUS="${ICON_TEMP} ${C_WARN}${temp_int}°C${C_RESET}"
-    else
-        # 正常范围，使用绿色
-        TEMP_STATUS="${ICON_TEMP} ${C_NORM}${temp_int}°C${C_RESET}"
+        color_code="$C_WARN" # 警告 (>= 65°C)：黄色
     fi
+
+    # 3. 使用最终的颜色代码组合输出字符串
+    TEMP_STATUS="${ICON_TEMP} ${color_code}${temp_int}°C${C_RESET}"
 }
 update_volume() {
     local vol
