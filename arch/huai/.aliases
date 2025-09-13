@@ -68,7 +68,8 @@ alias sing-boxupload="ssh_add_check; rsync -avzh --delete /workspace/free/sing-b
 alias clashupload="ssh_add_check; rsync -avzh --delete /workspace/free/clash/ root@ssh.202309.xyz:/root/clash/"
 alias openwrt="ssh_add_check; ssh root@192.168.31.1"
 alias ax6s="ssh_add_check; ssh root@192.168.31.2"
-
+alias mi8="ssh_add_check; ssh u0_a193@192.168.31.8"
+alias xiaoai="ssh_add_check; ssh u0_a69@192.168.31.18"
 # Git相关
 alias gaa='git add -A'
 alias gc='git commit -v'
