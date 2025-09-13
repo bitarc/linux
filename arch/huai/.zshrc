@@ -2,7 +2,14 @@ case $- in # check shell options
     *i*) ;; # interactive shell
       *) return;; # don't do anything
 esac
-
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+export MAILCAPS="$HOME/.config/mutt/mailcap"
+export GPG_TTY=$(tty)
+export LANG=en_US.UTF-8
+export VISUAL=vim
+export EDITOR=vim
+export TERM=xterm-256color
+umask 022
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi

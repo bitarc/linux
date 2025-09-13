@@ -1,6 +1,13 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
-
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+export MAILCAPS="$HOME/.config/mutt/mailcap"
+export GPG_TTY=$(tty)
+export LANG=en_US.UTF-8
+export VISUAL=vim
+export EDITOR=vim
+export TERM=xterm-256color
+umask 022
 [[ -r /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 
 # Bash specific prompt and environment
